@@ -114,6 +114,7 @@ All tools accept optional `profile` to override `.ossup.json`.
 ossup setup
 ossup profile list|add|show|use|default|rm
 ossup status
+ossup doctor
 ossup put <file> [--subdir x]
 ossup ls [subdir] [--markdown] [--images]
 ossup dirs [subdir] [--markdown]
@@ -131,6 +132,7 @@ ossup --profile <name> <command>
 - Single file ≤ 100MB
 - Presigned single PUT only (v1)
 - Upload requires **curl** in `PATH` (Windows 10+ usually includes `curl.exe`)
+- CDN / 自定义域名：在 profile JSON 设置 `publicBaseUrl`（如 `https://cdn.example.com`）
 
 ## Windows
 
