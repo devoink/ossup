@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Changed
+
+- GitHub Pages 工作流：升级 `checkout@v5`、`upload-pages-artifact@v4`、`deploy-pages@v5`（Node 24，消除 Actions 弃用警告）
+
 ### Added
 
 - 官网：<https://devoink.github.io/ossput/>（`docs/` + GitHub Pages）
