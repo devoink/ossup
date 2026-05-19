@@ -1,6 +1,6 @@
 # OSSUP (`ossup`)
 
-[![CI](https://github.com/devo/ossup/actions/workflows/ci.yml/badge.svg)](https://github.com/devo/ossup/actions/workflows/ci.yml)
+[![CI](https://github.com/devoink/ossup/actions/workflows/ci.yml/badge.svg)](https://github.com/devoink/ossup/actions/workflows/ci.yml)
 
 Aliyun OSS direct upload for AI agents — MCP server + CLI. Presigned PUT + curl. **Credentials live in `~/.config/ossup/profiles/`**, not in `mcp.json`.
 

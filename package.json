@@ -6,12 +6,12 @@
   "main": "./dist/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/devo/ossup.git"
+    "url": "git+https://github.com/devoink/ossup.git"
   },
   "bugs": {
-    "url": "https://github.com/devo/ossup/issues"
+    "url": "https://github.com/devoink/ossup/issues"
   },
-  "homepage": "https://github.com/devo/ossup#readme",
+  "homepage": "https://github.com/devoink/ossup#readme",
   "bin": {
     "ossup": "./dist/index.js"
   },
