@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/devoink/ossup/actions/workflows/ci.yml/badge.svg)](https://github.com/devoink/ossup/actions/workflows/ci.yml)
 
-Aliyun OSS direct upload for AI agents — MCP server + CLI. Presigned PUT + curl. **Credentials live in `~/.config/ossup/profiles/`**, not in `mcp.json`.
+Aliyun OSS direct upload for AI agents — MCP server + CLI. Presigned PUT via Node `fetch` (Node 18+). **Credentials live in `~/.config/ossup/profiles/`**, not in `mcp.json`.
 
 ## Quick start
 
@@ -120,7 +120,7 @@ ossup --profile <name> <command>
 
 - Single file ≤ 100MB
 - Presigned single PUT only (v1)
-- Upload requires **curl** in `PATH` (Windows 10+ usually includes `curl.exe`)
+- Requires **Node.js 18+**（内置 `fetch`，无需安装 curl）
 - CDN / 自定义域名：在 profile JSON 设置 `publicBaseUrl`（如 `https://cdn.example.com`）
 
 ## Windows
@@ -140,7 +140,7 @@ ossup --profile <name> <command>
 - `.cursor`、`.config` 为隐藏文件夹，可在资源管理器中开启「隐藏的项目」，或在地址栏输入 `%USERPROFILE%\.cursor`。
 - Skill 安装优先创建 **junction**；失败时自动 **复制** 到上述目录（升级 npm 后若用复制方式，需再执行 `ossup skill install`）。
 - `chmod 600` 在 Windows 上权限语义较弱，请勿依赖其做访问控制；仍请勿将 `profiles/*.json` 提交到 Git。
-- 上传失败且提示未找到 curl：在 PowerShell 运行 `curl --version`；若无输出，安装 [Git for Windows](https://git-scm.com/download/win) 或确保系统自带 curl 在 PATH 中。
+- 上传失败：运行 `ossup doctor`，确认 Node ≥18 且 Bucket 连通；检查 RAM 是否具备 `PutObject` 权限。
 
 ## 对象路径说明
 

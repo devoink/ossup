@@ -25,7 +25,7 @@ function printUsage(): void {
   ossup ls [子目录]          列出对象（--markdown 图片预览）
   ossup dirs [子目录]        列出目录（--markdown）
   ossup status               状态
-  ossup doctor               诊断环境（Node/curl/配置/MCP/Skill）
+  ossup doctor               诊断环境（Node/fetch/配置/MCP/Skill）
 
 全局选项:
   --profile <name>           指定账号（覆盖 .ossup.json）

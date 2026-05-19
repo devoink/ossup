@@ -30,7 +30,7 @@ const profileField = z
   .optional()
   .describe("Named profile; default from .ossup.json or global default");
 
-const INSTRUCTIONS = `You are connected to ossup — Aliyun OSS direct upload (presigned PUT + curl).
+const INSTRUCTIONS = `You are connected to ossup — Aliyun OSS direct upload (presigned PUT via fetch).
 
 When the user wants to upload files to OSS / 阿里云:
 1. If not configured, ask them to run in terminal: npx ossup setup (do NOT ask for secrets in chat).
@@ -183,7 +183,7 @@ export async function startMcpServer(): Promise<void> {
     "upload_file",
     {
       description:
-        "Upload a local file to Aliyun OSS (presigned PUT + curl). Returns objectKey and objectUrl.",
+        "Upload a local file to Aliyun OSS (presigned PUT). Returns objectKey and objectUrl.",
       inputSchema: z.object({
         profile: profileField,
         localPath: z.string(),

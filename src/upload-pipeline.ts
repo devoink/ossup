@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { readFile } from "node:fs/promises";
 import type { AppConfig } from "./types.js";
 import type {
   ConfirmUploadResult,
@@ -14,6 +14,8 @@ import {
   validateLocalFile,
   validateSubdir,
 } from "./validators.js";
+
+const UPLOAD_TIMEOUT_MS = 600_000;
 
 async function signPutUrl(
   config: AppConfig,
@@ -59,60 +61,36 @@ export async function prepareUpload(
   };
 }
 
-function curlNotFoundMessage(): string {
-  if (process.platform === "win32") {
-    return (
-      "未找到 curl（上传依赖 curl 执行 Presigned PUT）。" +
-      "Windows 10 及以上一般在 PATH 中有 curl.exe，请在终端运行 curl --version 检查。" +
-      "若不可用，可安装 Git for Windows，或在「设置 → 应用 → 可选功能」中启用相关组件。"
-    );
-  }
-  if (process.platform === "darwin") {
-    return "未找到 curl。macOS 通常已自带；若缺失可安装 Xcode Command Line Tools。";
-  }
-  return "未找到 curl。请安装 curl（例如：apt install curl / dnf install curl）。";
+function formatUploadHttpError(status: number, body: string): string {
+  const snippet = body.trim().slice(0, 300);
+  const detail = snippet ? `: ${snippet}` : "";
+  return `OSS upload failed (HTTP ${status})${detail}`;
 }
 
-export function runCurlPut(
+/** Presigned PUT via Node fetch (no external curl). */
+export async function putPresignedFile(
   uploadUrl: string,
   filePath: string,
   contentType: string,
 ): Promise<void> {
-  const curlBin = process.platform === "win32" ? "curl.exe" : "curl";
-  return new Promise((resolve, reject) => {
-    const child = spawn(
-      curlBin,
-      [
-        "-f",
-        "-sS",
-        "-X",
-        "PUT",
-        "-T",
-        filePath,
-        "-H",
-        `Content-Type: ${contentType}`,
-        "--max-time",
-        "600",
-        uploadUrl,
-      ],
-      { stdio: ["ignore", "pipe", "pipe"] },
+  if (typeof globalThis.fetch !== "function") {
+    throw new Error(
+      "当前 Node 运行时无 fetch，请使用 Node.js 18 或更高版本",
     );
-    let stderr = "";
-    child.stderr?.on("data", (c) => {
-      stderr += String(c);
-    });
-    child.on("error", (err) => {
-      if ((err as NodeJS.ErrnoException).code === "ENOENT") {
-        reject(new Error(curlNotFoundMessage()));
-      } else {
-        reject(err);
-      }
-    });
-    child.on("close", (code) => {
-      if (code === 0) resolve();
-      else reject(new Error(`curl failed (${code}): ${stderr || "unknown"}`));
-    });
+  }
+
+  const body = await readFile(filePath);
+  const response = await fetch(uploadUrl, {
+    method: "PUT",
+    headers: { "Content-Type": contentType },
+    body,
+    signal: AbortSignal.timeout(UPLOAD_TIMEOUT_MS),
   });
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    throw new Error(formatUploadHttpError(response.status, text));
+  }
 }
 
 export async function confirmUpload(
@@ -164,7 +142,7 @@ export async function uploadFile(
   const { absolutePath, size, filename } = await validateLocalFile(localPath);
   const ct = contentType?.trim() || inferContentType(filename);
   const prepared = await prepareUpload(config, filename, ct, subdir, false);
-  await runCurlPut(prepared.uploadUrl, absolutePath, ct);
+  await putPresignedFile(prepared.uploadUrl, absolutePath, ct);
   const confirmed = await confirmUpload(config, prepared.objectKey, size);
   if (!confirmed.exists) {
     throw new Error("upload completed but object not found on OSS");

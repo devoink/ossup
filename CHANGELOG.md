@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- 上传改用 Node 内置 `fetch` 执行 Presigned PUT，不再依赖系统 `curl`
+
 ## 0.0.1
 
 ### Added

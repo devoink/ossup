@@ -1,6 +1,5 @@
 import { access } from "node:fs/promises";
 import { constants } from "node:fs";
-import { spawnSync } from "node:child_process";
 import { lstat, readlink } from "node:fs/promises";
 import { resolve, dirname } from "node:path";
 import {
@@ -63,14 +62,13 @@ export async function runDoctor(profile?: string): Promise<{
     detail: nodeMajor >= 18 ? process.version : `${process.version}（需要 ≥18）`,
   });
 
-  const curl = spawnSync("curl", ["--version"], { encoding: "utf8" });
+  const hasFetch = typeof globalThis.fetch === "function";
   checks.push({
-    name: "curl",
-    ok: curl.status === 0,
-    detail:
-      curl.status === 0
-        ? (curl.stdout.split("\n")[0] ?? "ok")
-        : "未找到（上传依赖 curl）",
+    name: "fetch（上传）",
+    ok: hasFetch,
+    detail: hasFetch
+      ? `Node ${process.version} 内置 fetch`
+      : "不可用（需要 Node.js 18+）",
   });
 
   const configured = await configExists();

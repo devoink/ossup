@@ -32,7 +32,7 @@ description: >-
 | 看有哪些目录前缀 | `list_directories` | 树形用 `format=markdown` |
 | 检查配置 / MCP | `get_setup_status` | |
 | 列出所有账号 | `list_profiles` | |
-| 高级：自管 PUT | `prepare_upload` → curl → `confirm_upload` | 一般不必 |
+| 高级：自管 PUT | `prepare_upload` → HTTP PUT → `confirm_upload` | 一般不必 |
 
 所有工具均可选 `profile` 覆盖当前项目绑定。
 

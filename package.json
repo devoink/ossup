@@ -1,7 +1,7 @@
 {
   "name": "ossup",
   "version": "0.0.1",
-  "description": "MCP server for Aliyun OSS presigned direct upload — setup via CLI, upload via Agent or `ossup put`",
+  "description": "MCP server for Aliyun OSS presigned direct upload (Node fetch) — setup via CLI, upload via Agent or `ossup put`",
   "type": "module",
   "main": "./dist/index.js",
   "repository": {

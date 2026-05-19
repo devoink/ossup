@@ -39,8 +39,10 @@ export function mcpErrorFromUnknown(err: unknown): McpToolResult {
 
   if (/not configured|未配置/i.test(message)) {
     nextStep = "在终端运行 npx ossup setup，然后重启 IDE";
-  } else if (/curl/i.test(message)) {
-    nextStep = "安装 curl 后重试（macOS 可运行 xcode-select --install）";
+  } else if (/upload failed|OSS upload/i.test(message)) {
+    nextStep = "检查网络、RAM 权限与 presigned URL 是否过期";
+  } else if (/fetch|Node\.js 18/i.test(message)) {
+    nextStep = "使用 Node.js 18 或更高版本";
   } else if (/extension|subdir|refusing/i.test(message)) {
     nextStep = "检查文件类型、subdir 命名或是否误选敏感文件";
   } else if (/AccessDenied|InvalidAccessKeyId|SignatureDoesNotMatch/i.test(message)) {
