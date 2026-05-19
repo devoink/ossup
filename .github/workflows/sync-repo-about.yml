@@ -10,6 +10,7 @@ on:
       - .github/workflows/sync-repo-about.yml
 
 permissions:
+  contents: read
   administration: write
 
 jobs:
@@ -18,20 +19,20 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Read homepage from package.json
-        id: meta
-        run: |
-          HOMEPAGE=$(node -pe "JSON.parse(require('fs').readFileSync('package.json','utf8')).homepage || ''")
-          if [ -z "$HOMEPAGE" ]; then
-            echo "package.json has no homepage field" >&2
-            exit 1
-          fi
-          echo "homepage=$HOMEPAGE" >> "$GITHUB_OUTPUT"
-
       - name: Update repository About (Website)
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh api "repos/${{ github.repository }}" \
-            --method PATCH \
-            -f homepage="${{ steps.meta.outputs.homepage }}"
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+            const homepage = pkg.homepage;
+            if (!homepage) {
+              core.setFailed("package.json missing homepage field");
+              return;
+            }
+            await github.rest.repos.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              homepage,
+            });
+            core.info(`About website set to ${homepage}`);
