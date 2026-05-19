@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "defaultProfile": "default",
+  "profiles": {
+    "default": { "label": "默认账号" },
+    "client-a": { "label": "客户 A 交付桶" }
+  }
+}

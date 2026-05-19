@@ -1,0 +1,58 @@
+{
+  "name": "ossup",
+  "version": "1.0.0",
+  "description": "MCP server for Aliyun OSS presigned direct upload — setup via CLI, upload via Agent or `ossup put`",
+  "type": "module",
+  "main": "./dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devo/ossup.git"
+  },
+  "bugs": {
+    "url": "https://github.com/devo/ossup/issues"
+  },
+  "homepage": "https://github.com/devo/ossup#readme",
+  "bin": {
+    "ossup": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "AGENTS.md",
+    "CHANGELOG.md",
+    ".cursor/skills/ossup",
+    "config.index.example.json",
+    "profiles.example",
+    ".ossup.json.example"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node --test test/**/*.test.js",
+    "prepublishOnly": "npm run build && npm test",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch"
+  },
+  "keywords": [
+    "mcp",
+    "cursor",
+    "aliyun",
+    "oss",
+    "upload",
+    "ossup",
+    "model-context-protocol"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^7.4.0",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "ali-oss": "^6.22.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/ali-oss": "^6.16.11",
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2"
+  }
+}
