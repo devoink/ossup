@@ -1,0 +1,37 @@
+# 将 package.json 的 homepage 同步到 GitHub 仓库 About「Website」
+name: Sync repo About
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - package.json
+      - .github/workflows/sync-repo-about.yml
+
+permissions:
+  administration: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Read homepage from package.json
+        id: meta
+        run: |
+          HOMEPAGE=$(node -pe "JSON.parse(require('fs').readFileSync('package.json','utf8')).homepage || ''")
+          if [ -z "$HOMEPAGE" ]; then
+            echo "package.json has no homepage field" >&2
+            exit 1
+          fi
+          echo "homepage=$HOMEPAGE" >> "$GITHUB_OUTPUT"
+
+      - name: Update repository About (Website)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${{ github.repository }}" \
+            --method PATCH \
+            -f homepage="${{ steps.meta.outputs.homepage }}"

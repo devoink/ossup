@@ -5,6 +5,7 @@
 ### Changed
 
 - GitHub Pages 工作流：升级 `checkout@v5`、`upload-pages-artifact@v4`、`deploy-pages@v5`（Node 24，消除 Actions 弃用警告）
+- 新增 `Sync repo About` 工作流：将 `package.json` 的 `homepage` 同步到仓库 About 官网链接
 
 ### Added
 

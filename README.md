@@ -1,10 +1,29 @@
-# ossput
+<p align="center">
+  <a href="https://devoink.github.io/ossput/">
+    <img src="docs/assets/logo.png" width="96" alt="OSSPUT logo" />
+  </a>
+</p>
 
-[![CI](https://github.com/devoink/ossput/actions/workflows/ci.yml/badge.svg)](https://github.com/devoink/ossput/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/ossput)](https://www.npmjs.com/package/ossput)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+<h1 align="center">OSSPUT</h1>
 
-**[官网](https://devoink.github.io/ossput/)** · [npm](https://www.npmjs.com/package/ossput) · [更新日志](./CHANGELOG.md)
+<p align="center">
+  <strong>v0.0.1</strong> · 专注开发，让 AI 管理你的云文件
+</p>
+
+<p align="center">
+  <a href="https://github.com/devoink/ossput/actions/workflows/ci.yml"><img src="https://github.com/devoink/ossput/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://www.npmjs.com/package/ossput"><img src="https://img.shields.io/npm/v/ossput.svg" alt="npm version" /></a>
+  <img src="https://img.shields.io/badge/node-%3E%3D18-339933?logo=node.js&logoColor=white" alt="Node 18+" />
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT" /></a>
+</p>
+
+<p align="center">
+  <a href="https://devoink.github.io/ossput/">官网</a>
+  ·
+  <a href="https://www.npmjs.com/package/ossput">npm</a>
+  ·
+  <a href="./CHANGELOG.md">更新日志</a>
+</p>
 
 **OSSPUT**（npm 包名 `ossput`）面向日常开发：在 **Cursor、Claude Code、Claude Desktop** 里用 AI **上传、列举、管理** 阿里云 OSS 上的文件（截图、附件、构建产物等），并拿到可引用的 `objectUrl`。提供 MCP 工具、CLI 与 Agent Skill；**AccessKey 只存在本机** `~/.config/ossput/profiles/`，不写入 `mcp.json`，也不应在对话里粘贴密钥。需要 Node.js 18+。
 

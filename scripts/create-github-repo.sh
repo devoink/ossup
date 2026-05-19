@@ -18,11 +18,14 @@ if git remote get-url origin >/dev/null 2>&1; then
   exit 1
 fi
 
+HOMEPAGE="$(node -pe "JSON.parse(require('fs').readFileSync('package.json','utf8')).homepage" 2>/dev/null || echo "https://devoink.github.io/ossput/")"
+
 gh repo create "${OWNER}/${REPO}" \
   --"${VISIBILITY}" \
   --source=. \
   --remote=origin \
   --description="MCP + CLI for AI-assisted Aliyun OSS file management in development" \
+  --homepage="${HOMEPAGE}" \
   --push
 
 echo "Done: https://github.com/${OWNER}/${REPO}"
