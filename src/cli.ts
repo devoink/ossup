@@ -10,6 +10,8 @@ import { getSetupStatusJson } from "./mcp.js";
 import { getPackageVersion } from "./setup/mcp-registry.js";
 import { runProfileCommand } from "./profile-cli.js";
 import { runSkillCommand } from "./skill-cli.js";
+import { runDoctor } from "./doctor.js";
+import { ui } from "./setup/ui.js";
 
 function printUsage(): void {
   console.log(`ossup — 阿里云 OSS 直传（MCP + 命令行）
@@ -23,6 +25,7 @@ function printUsage(): void {
   ossup ls [子目录]          列出对象（--markdown 图片预览）
   ossup dirs [子目录]        列出目录（--markdown）
   ossup status               状态
+  ossup doctor               诊断环境（Node/curl/配置/MCP/Skill）
 
 全局选项:
   --profile <name>           指定账号（覆盖 .ossup.json）
@@ -124,6 +127,16 @@ export async function runCli(argv: string[]): Promise<number> {
     };
     await runSetup(options);
     return 0;
+  }
+
+  if (command === "doctor") {
+    const { checks, ok } = await runDoctor(profile);
+    for (const c of checks) {
+      const mark = c.ok ? ui.green("✓") : ui.red("✗");
+      console.log(`${mark} ${c.name}: ${c.detail}`);
+    }
+    console.log(ok ? `\n${ui.green("全部通过")}` : `\n${ui.red("存在问题，请按提示修复")}`);
+    return ok ? 0 : 1;
   }
 
   if (command === "status") {

@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- `ossup doctor`：诊断 Node、curl、配置、MCP、Skill 与 Bucket 连通性
+- Profile 可选 `publicBaseUrl`：自定义 CDN 域名生成 `objectUrl`
+
 ## 1.0.0
 
 ### Added

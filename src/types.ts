@@ -7,6 +7,8 @@ export interface AppConfig {
   presignExpiresSec: number;
   allowedExtensions: string[];
   endpoint?: string | null;
+  /** 公网访问根 URL，如 https://cdn.example.com（无尾斜杠） */
+  publicBaseUrl?: string | null;
 }
 
 export interface OssupIndexConfig {

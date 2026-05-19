@@ -66,6 +66,10 @@ export function parseConfig(raw: unknown): AppConfig {
     presignExpiresSec: Number.isFinite(presignExpiresSec) ? presignExpiresSec : 900,
     allowedExtensions,
     endpoint: o.endpoint != null ? String(o.endpoint) : null,
+    publicBaseUrl:
+      o.publicBaseUrl != null && String(o.publicBaseUrl).trim()
+        ? String(o.publicBaseUrl).trim().replace(/\/+$/, "")
+        : null,
   };
 }
 

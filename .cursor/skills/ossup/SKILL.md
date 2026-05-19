@@ -15,7 +15,7 @@ description: >-
 2. 终端已执行 `npx ossup setup`（注册 MCP，并将本 Skill 链接到 `~/.cursor/skills/ossup` 与 `~/.claude/skills/ossup`，**无需**复制到项目目录）。
 3. Cursor / Claude Desktop 的 `mcp.json` 已包含 **ossup**；凭证在 `~/.config/ossup/profiles/`，**禁止**在对话中向用户索要 AccessKey。
 
-未配置时：请用户在**终端**执行 `npx ossup setup`，然后重启 IDE / 新开 Agent 会话。可调用 `get_setup_status` 检查。
+未配置时：请用户在**终端**执行 `npx ossup setup`，然后重启 IDE / 新开 Agent 会话。可调用 `get_setup_status` 检查；用户本机可运行 `ossup doctor` 做完整诊断。
 
 ## 选用哪个 profile
 

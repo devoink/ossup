@@ -15,5 +15,6 @@
     "mp4",
     "zip"
   ],
-  "endpoint": null
+  "endpoint": null,
+  "publicBaseUrl": "https://cdn.example.com"
 }

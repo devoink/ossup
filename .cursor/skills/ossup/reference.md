@@ -5,7 +5,7 @@
 | 路径 | 内容 |
 |------|------|
 | `~/.config/ossup/config.json` | 索引：`defaultProfile`、`profiles` 列表（无密钥） |
-| `~/.config/ossup/profiles/{name}.json` | 单账号：region、bucket、prefix、AK（`chmod 600`） |
+| `~/.config/ossup/profiles/{name}.json` | 单账号：region、bucket、prefix、AK（`chmod 600`）；可选 `publicBaseUrl`（CDN 域名） |
 | `{repo}/.ossup.json` | `{ "profile": "default" }`，可提交 Git |
 
 ## MCP 工具参数摘要

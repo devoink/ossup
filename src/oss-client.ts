@@ -16,6 +16,9 @@ export function createOssClient(config: AppConfig): OSS {
 }
 
 export function publicObjectUrl(config: AppConfig, objectKey: string): string {
+  if (config.publicBaseUrl) {
+    return `${config.publicBaseUrl}/${objectKey}`;
+  }
   if (config.endpoint) {
     const host = config.endpoint.replace(/^https?:\/\//, "");
     return `https://${config.bucket}.${host}/${objectKey}`;
