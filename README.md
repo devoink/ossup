@@ -318,6 +318,15 @@ npm test
 
 **官网静态页：** 见上文 [官网](#官网) 一节（`npm run docs:dev`）。
 
+**GitHub 仓库 About 官网链接**（右侧 About 区「Website」）需用 `gh` 写仓库设置，`GITHUB_TOKEN` 无此权限。维护者在本机执行一次：
+
+```bash
+gh auth login   # 若尚未登录
+npm run repo:about
+```
+
+或：**Settings → General → Website** 填写 `package.json` 中的 `homepage`（当前为 <https://devoink.github.io/ossput/>）。
+
 ---
 
 ## 许可证

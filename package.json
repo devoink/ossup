@@ -31,7 +31,8 @@
     "prepublishOnly": "npm run build && npm test",
     "start": "node dist/index.js",
     "dev": "tsc --watch",
-    "docs:dev": "npx --yes serve docs -p 5173"
+    "docs:dev": "npx --yes serve docs -p 5173",
+    "repo:about": "bash scripts/sync-repo-about.sh"
   },
   "keywords": [
     "mcp",
