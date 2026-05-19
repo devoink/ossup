@@ -1,0 +1,173 @@
+# ossput
+
+[![CI](https://github.com/devoink/ossput/actions/workflows/ci.yml/badge.svg)](https://github.com/devoink/ossput/actions/workflows/ci.yml)
+
+Aliyun OSS direct upload for AI agents — MCP server + CLI. Presigned PUT via Node `fetch` (Node 18+). **Credentials live in `~/.config/ossput/profiles/`**, not in `mcp.json`.
+
+## Quick start
+
+```bash
+npx -y ossput setup
+```
+
+向导会：创建第一个 **profile**（账号）→ 检测连通性 → 注册 MCP → 可选写入项目 `.ossput.json`。
+
+完成后 **重启 IDE**，确认 **ossput** MCP 已连接。
+
+```bash
+ossput put ./photo.png --subdir demo/2026-05
+```
+
+## AI Agent：MCP 与 Skill
+
+| 能力 | 作用 | 如何启用 |
+|------|------|----------|
+| **MCP** | `upload_file` 等工具 | `npx ossput setup` 注册到 Cursor / Claude Desktop，重启 IDE |
+| **Skill** | 教 Agent 何时用 MCP、路径规则 | **`setup` 会自动安装到本机用户目录**（无需复制到项目） |
+
+```bash
+npx ossput setup              # OSS 配置 + MCP + Skill（用户级）
+npx ossput skill install      # 仅重装 Skill（升级 npm 包后可选）
+npx ossput setup --skip-skill # 不要安装 Skill
+```
+
+安装位置（符号链接指向 npm 包内 Skill，升级包后链接仍有效）：
+
+- Cursor：`~/.cursor/skills/ossput/`
+- Claude Code：`~/.claude/skills/ossput/`（可用 `/ossput` 调用）
+
+**不需要**把 `SKILL.md` 复制进每个项目的 `.cursor/skills/`。仓库内的 `.cursor/skills/ossput/` 仅用于开发与 npm 打包。
+
+Agent 细则见 [AGENTS.md](./AGENTS.md)。
+
+### Claude Code 的 MCP
+
+`ossput setup` 可将 MCP 写入 **`~/.claude.json`**（与 Cursor 的 `~/.cursor/mcp.json` 并列）。向导中勾选 **Claude Code** 即可；也可事后重新运行 `npx ossput setup` 仅注册 MCP。
+
+若未自动注册，可手动在 `~/.claude.json` 的 `mcpServers` 中加入与 Cursor 相同的 `node` + `dist/index.js` 条目。
+
+### Agent 须知（摘要）
+
+- 未配置 → 终端 `npx ossput setup`，**勿在对话中索要 AccessKey**
+- 上传 → MCP `upload_file`；看图 → `list_objects`（`format=markdown`）
+- 对象 Key：`{prefix}{subdir}{年}/{月}/{uuid}.ext`
+
+## 多账号 / 多项目
+
+| 文件 | 说明 |
+|------|------|
+| `~/.config/ossput/config.json` | 索引：`defaultProfile` + profile 列表（无密钥） |
+| `~/.config/ossput/profiles/{name}.json` | 单账号 OSS 配置（chmod 600） |
+| `{repo}/.ossput.json` | 项目绑定：`{ "profile": "default" }`（可提交 Git） |
+
+**解析优先级：** CLI/MCP 的 `profile` 参数 → `OSSPUT_PROFILE` → 项目 `.ossput.json` → 全局 `defaultProfile`
+
+```bash
+ossput profile add client-a      # 新增账号
+ossput profile list              # 列出账号
+ossput profile use default       # 当前目录写 .ossput.json
+ossput --profile client-a put ./x.zip
+```
+
+示例见 [config.index.example.json](./config.index.example.json)、[profiles.example/default.json](./profiles.example/default.json)、[.ossput.json.example](./.ossput.json.example)。
+
+## MCP tools
+
+| Tool | Description |
+|------|-------------|
+| `upload_file` | Upload local file |
+| `batch_upload_file` | Batch upload (max 20 files per call) |
+| `delete_object` | Delete one object (`allowDelete` + `confirm: true`) |
+| `list_objects` | List files (`format=markdown` for image previews) |
+| `list_directories` | List folder prefixes |
+| `list_profiles` | List profiles + active profile in cwd |
+| `get_setup_status` | Config + MCP registration |
+| `prepare_upload` / `confirm_upload` | Advanced presign flow |
+
+All tools accept optional `profile` to override `.ossput.json`.
+
+## MCP configuration (manual)
+
+```json
+{
+  "mcpServers": {
+    "ossput": {
+      "command": "node",
+      "args": ["/absolute/path/to/ossput/dist/index.js"]
+    }
+  }
+}
+```
+
+## CLI
+
+```bash
+ossput setup
+ossput profile list|add|show|use|default|rm
+ossput status
+ossput doctor
+ossput put <file> [file2 …] [--subdir x] [--stop-on-error]
+ossput rm <objectKey> --confirm
+ossput ls [subdir] [--markdown] [--images]
+ossput dirs [subdir] [--markdown]
+ossput --profile <name> <command>
+```
+
+## Security
+
+- Use RAM users scoped to bucket prefix (`PutObject` / `HeadObject`).
+- Do not paste AccessKeys into chat; use `setup` / `profile add` in terminal.
+- Commit `.ossput.json` only; never commit `profiles/*.json`.
+- **Delete:** off by default; set `allowDelete: true` in profile only when needed. MCP requires `confirm: true` and `objectKey` under profile `prefix`. CLI: `ossput rm <key> --confirm`. RAM 示例见 [docs/ram-policy.example.json](./docs/ram-policy.example.json).
+
+## Limits
+
+- Single file ≤ 100MB
+- Presigned single PUT only (v1)
+- Requires **Node.js 18+**（内置 `fetch`，无需安装 curl）
+- CDN / 自定义域名：在 profile JSON 设置 `publicBaseUrl`（如 `https://cdn.example.com`）
+
+## Windows
+
+在 Windows 上路径通过 `%USERPROFILE%`（`os.homedir()`）解析，与 macOS/Linux 使用同一套逻辑，**未在 Windows CI 中完整验证**，以下为典型位置：
+
+| 用途 | 典型路径 |
+|------|----------|
+| OSS 配置 | `%USERPROFILE%\.config\ossput\` |
+| Cursor MCP | `%USERPROFILE%\.cursor\mcp.json` |
+| Claude Desktop MCP | `%APPDATA%\Claude\claude_desktop_config.json` |
+| Cursor Skill | `%USERPROFILE%\.cursor\skills\ossput\` |
+| Claude Code Skill | `%USERPROFILE%\.claude\skills\ossput\` |
+
+说明：
+
+- `.cursor`、`.config` 为隐藏文件夹，可在资源管理器中开启「隐藏的项目」，或在地址栏输入 `%USERPROFILE%\.cursor`。
+- Skill 安装优先创建 **junction**；失败时自动 **复制** 到上述目录（升级 npm 后若用复制方式，需再执行 `ossput skill install`）。
+- `chmod 600` 在 Windows 上权限语义较弱，请勿依赖其做访问控制；仍请勿将 `profiles/*.json` 提交到 Git。
+- 上传失败：运行 `ossput doctor`，确认 Node ≥18 且 Bucket 连通；检查 RAM 是否具备 `PutObject` 权限。
+
+## 对象路径说明
+
+`ossput put ./a.png --subdir ossput_test` 实际上传 Key 类似：
+
+```text
+ossput_test/2026/05/<uuid>.png
+```
+
+（另加 profile 配置的 `prefix`。）列表与上传使用相同 `subdir` 才能对齐。
+
+## Local development
+
+```bash
+cd ossput
+npm ci && npm run build
+node dist/index.js setup
+```
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md).
+
+## License
+
+MIT

@@ -1,0 +1,21 @@
+{
+  "region": "oss-cn-hangzhou",
+  "bucket": "your-bucket",
+  "prefix": "/",
+  "accessKeyId": "LTAI...",
+  "accessKeySecret": "...",
+  "presignExpiresSec": 900,
+  "allowedExtensions": [
+    "png",
+    "jpg",
+    "jpeg",
+    "gif",
+    "webp",
+    "pdf",
+    "mp4",
+    "zip"
+  ],
+  "endpoint": null,
+  "publicBaseUrl": "https://cdn.example.com",
+  "allowDelete": false
+}

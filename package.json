@@ -1,0 +1,59 @@
+{
+  "name": "ossput",
+  "version": "0.0.1",
+  "description": "MCP server for Aliyun OSS presigned direct upload (Node fetch) — setup via CLI, upload via Agent or `ossput put`",
+  "type": "module",
+  "main": "./dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devoink/ossput.git"
+  },
+  "bugs": {
+    "url": "https://github.com/devoink/ossput/issues"
+  },
+  "homepage": "https://github.com/devoink/ossput#readme",
+  "bin": {
+    "ossput": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "AGENTS.md",
+    "CHANGELOG.md",
+    ".cursor/skills/ossput",
+    "config.index.example.json",
+    "profiles.example",
+    ".ossput.json.example",
+    "docs"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node scripts/run-tests.mjs",
+    "prepublishOnly": "npm run build && npm test",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch"
+  },
+  "keywords": [
+    "mcp",
+    "cursor",
+    "aliyun",
+    "oss",
+    "upload",
+    "ossput",
+    "model-context-protocol"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^7.4.0",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "ali-oss": "^6.22.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/ali-oss": "^6.16.11",
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2"
+  }
+}

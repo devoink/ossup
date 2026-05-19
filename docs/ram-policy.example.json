@@ -1,0 +1,31 @@
+{
+  "Version": "1",
+  "Statement": [
+    {
+      "Sid": "OssputListAndRead",
+      "Effect": "Allow",
+      "Action": [
+        "oss:ListObjects",
+        "oss:GetObject",
+        "oss:HeadObject"
+      ],
+      "Resource": [
+        "acs:oss:*:*:your-bucket",
+        "acs:oss:*:*:your-bucket/your-prefix/*"
+      ]
+    },
+    {
+      "Sid": "OssputWrite",
+      "Effect": "Allow",
+      "Action": ["oss:PutObject"],
+      "Resource": ["acs:oss:*:*:your-bucket/your-prefix/*"]
+    },
+    {
+      "Sid": "OssputDeleteOptional",
+      "Effect": "Allow",
+      "Action": ["oss:DeleteObject"],
+      "Resource": ["acs:oss:*:*:your-bucket/your-prefix/*"],
+      "Comment": "仅当 profile 开启 allowDelete 且确需 delete_object 时授予"
+    }
+  ]
+}
