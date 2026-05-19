@@ -461,7 +461,7 @@ export async function promptForClients(): Promise<string[]> {
     return {
       name: p ? `${c.displayName}  ${p}` : `${c.displayName}（当前系统不可用）`,
       value: c.id,
-      checked: c.id === "cursor",
+      checked: c.id === "cursor" || c.id === "claude-code",
       disabled: p ? false : true,
     };
   });

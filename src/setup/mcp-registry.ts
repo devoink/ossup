@@ -38,6 +38,11 @@ export const MCP_CLIENTS: McpClientDefinition[] = [
     resolveConfigPath: () => join(homedir(), ".cursor", "mcp.json"),
   },
   {
+    id: "claude-code",
+    displayName: "Claude Code",
+    resolveConfigPath: () => join(homedir(), ".claude.json"),
+  },
+  {
     id: "claude-desktop",
     displayName: "Claude Desktop",
     resolveConfigPath: claudeDesktopPath,
@@ -51,9 +56,9 @@ export async function getPackageVersion(): Promise<string> {
     const dir = dirname(fileURLToPath(import.meta.url));
     const pkgPath = join(dir, "..", "..", "package.json");
     const raw = JSON.parse(await readPkg(pkgPath, "utf8")) as { version?: string };
-    return raw.version ?? "1.0.0";
+    return raw.version ?? "0.0.1";
   } catch {
-    return "1.0.0";
+    return "0.0.1";
   }
 }
 

@@ -42,20 +42,9 @@ Agent 细则见 [AGENTS.md](./AGENTS.md)。
 
 ### Claude Code 的 MCP
 
-`ossup setup` 目前注册 **Cursor** 与 **Claude Desktop**，不包含 Claude Code CLI。在 Claude Code 中需自行添加 MCP（示例，路径按本机 `npm root -g` 调整）：
+`ossup setup` 可将 MCP 写入 **`~/.claude.json`**（与 Cursor 的 `~/.cursor/mcp.json` 并列）。向导中勾选 **Claude Code** 即可；也可事后重新运行 `npx ossup setup` 仅注册 MCP。
 
-```json
-{
-  "mcpServers": {
-    "ossup": {
-      "command": "node",
-      "args": ["/path/to/node_modules/ossup/dist/index.js"]
-    }
-  }
-}
-```
-
-具体配置文件位置见 Claude Code 文档中的 MCP 一节。
+若未自动注册，可手动在 `~/.claude.json` 的 `mcpServers` 中加入与 Cursor 相同的 `node` + `dist/index.js` 条目。
 
 ### Agent 须知（摘要）
 

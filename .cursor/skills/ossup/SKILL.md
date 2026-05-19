@@ -68,4 +68,5 @@ description: >-
 ## 更多说明
 
 - 配置结构、CLI 命令：见仓库 [README.md](../../../README.md)
-- 工具参数与示例：见 [reference.md](reference.md)
+- 工具参数：见 [reference.md](reference.md)
+- 对话示例与反模式：见 [examples.md](examples.md)

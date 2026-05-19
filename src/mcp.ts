@@ -23,6 +23,7 @@ import {
 } from "./upload-pipeline.js";
 import { inferContentType } from "./validators.js";
 import { getPackageVersion } from "./setup/mcp-registry.js";
+import { mcpJson, mcpText, runMcpTool } from "./mcp-result.js";
 
 const profileField = z
   .string()
@@ -66,36 +67,26 @@ export async function startMcpServer(): Promise<void> {
         "List configured OSS profiles and which profile is active in the current workspace.",
       inputSchema: z.object({}),
     },
-    async () => {
-      const rows = await listProfileNames();
-      let active: Awaited<ReturnType<typeof loadConfigWithProfile>> | null =
-        null;
-      if (rows.length > 0) {
-        try {
-          active = await loadConfigWithProfile();
-        } catch {
-          active = null;
+    async () =>
+      runMcpTool(async () => {
+        const rows = await listProfileNames();
+        let active: Awaited<ReturnType<typeof loadConfigWithProfile>> | null =
+          null;
+        if (rows.length > 0) {
+          try {
+            active = await loadConfigWithProfile();
+          } catch {
+            active = null;
+          }
         }
-      }
-      const projectFile = await findProjectOssupJson();
-      return {
-        content: [
-          {
-            type: "text" as const,
-            text: JSON.stringify(
-              {
-                profiles: rows,
-                activeProfile: active?.resolved.name ?? null,
-                bindingSource: active?.resolved.source ?? null,
-                projectFile,
-              },
-              null,
-              2,
-            ),
-          },
-        ],
-      };
-    },
+        const projectFile = await findProjectOssupJson();
+        return mcpJson({
+          profiles: rows,
+          activeProfile: active?.resolved.name ?? null,
+          bindingSource: active?.resolved.source ?? null,
+          projectFile,
+        });
+      }),
   );
 
   server.registerTool(
@@ -107,31 +98,34 @@ export async function startMcpServer(): Promise<void> {
         profile: profileField,
       }),
     },
-    async ({ profile }) => {
-      const configured = await configExists();
-      const clientsConfigured = configured ? await listConfiguredClients() : [];
-      let body: Record<string, unknown> = {
-        configured,
-        indexPath: INDEX_CONFIG_PATH,
-        clientsConfigured,
-        setupCommand: "npx ossup setup",
-      };
-      if (configured) {
-        const { config, resolved } = await loadConfigWithProfile({ profile });
-        body = {
-          ...body,
-          activeProfile: resolved.name,
-          bindingSource: resolved.source,
-          projectFile: resolved.projectFile ?? null,
-          prefix: formatPrefixDisplay(config.prefix),
-          bucket: config.bucket,
-          region: config.region,
+    async ({ profile }) =>
+      runMcpTool(async () => {
+        const configured = await configExists();
+        const clientsConfigured = configured
+          ? await listConfiguredClients()
+          : [];
+        let body: Record<string, unknown> = {
+          configured,
+          indexPath: INDEX_CONFIG_PATH,
+          clientsConfigured,
+          setupCommand: "npx ossup setup",
+          doctorCommand: "ossup doctor",
         };
-      }
-      return {
-        content: [{ type: "text" as const, text: JSON.stringify(body, null, 2) }],
-      };
-    },
+        if (configured) {
+          const { config, resolved } = await loadConfigWithProfile({ profile });
+          body = {
+            ...body,
+            activeProfile: resolved.name,
+            bindingSource: resolved.source,
+            projectFile: resolved.projectFile ?? null,
+            prefix: formatPrefixDisplay(config.prefix),
+            bucket: config.bucket,
+            region: config.region,
+            publicBaseUrl: config.publicBaseUrl ?? null,
+          };
+        }
+        return mcpJson(body);
+      }),
   );
 
   server.registerTool(
@@ -145,20 +139,15 @@ export async function startMcpServer(): Promise<void> {
         format: z.enum(["json", "markdown"]).optional(),
       }),
     },
-    async ({ profile, subdir, format }) => {
-      const { config } = await requireResolved(profile);
-      const result = await listDirectories(config, { subdir });
-      if (format === "markdown") {
-        return {
-          content: [
-            { type: "text" as const, text: formatDirectoriesAsMarkdown(result) },
-          ],
-        };
-      }
-      return {
-        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
-      };
-    },
+    async ({ profile, subdir, format }) =>
+      runMcpTool(async () => {
+        const { config } = await requireResolved(profile);
+        const result = await listDirectories(config, { subdir });
+        if (format === "markdown") {
+          return mcpText(formatDirectoriesAsMarkdown(result));
+        }
+        return mcpJson(result);
+      }),
   );
 
   server.registerTool(
@@ -175,23 +164,19 @@ export async function startMcpServer(): Promise<void> {
         previewMax: z.number().int().min(1).max(50).optional(),
       }),
     },
-    async ({ profile, subdir, maxKeys, format, imagesOnly, previewMax }) => {
-      const { config } = await requireResolved(profile);
-      const result = await listObjects(config, { subdir, maxKeys, imagesOnly });
-      if (format === "markdown") {
-        return {
-          content: [
-            {
-              type: "text" as const,
-              text: formatListAsMarkdown(result, { previewMax }),
-            },
-          ],
-        };
-      }
-      return {
-        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
-      };
-    },
+    async ({ profile, subdir, maxKeys, format, imagesOnly, previewMax }) =>
+      runMcpTool(async () => {
+        const { config } = await requireResolved(profile);
+        const result = await listObjects(config, {
+          subdir,
+          maxKeys,
+          imagesOnly,
+        });
+        if (format === "markdown") {
+          return mcpText(formatListAsMarkdown(result, { previewMax }));
+        }
+        return mcpJson(result);
+      }),
   );
 
   server.registerTool(
@@ -206,13 +191,12 @@ export async function startMcpServer(): Promise<void> {
         contentType: z.string().optional(),
       }),
     },
-    async ({ profile, localPath, subdir, contentType }) => {
-      const { config } = await requireResolved(profile);
-      const result = await uploadFile(config, localPath, subdir, contentType);
-      return {
-        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
-      };
-    },
+    async ({ profile, localPath, subdir, contentType }) =>
+      runMcpTool(async () => {
+        const { config } = await requireResolved(profile);
+        const result = await uploadFile(config, localPath, subdir, contentType);
+        return mcpJson(result);
+      }),
   );
 
   server.registerTool(
@@ -227,19 +211,18 @@ export async function startMcpServer(): Promise<void> {
         overwrite: z.boolean().optional(),
       }),
     },
-    async ({ profile, filename, contentType, subdir, overwrite }) => {
-      const { config } = await requireResolved(profile);
-      const result = await prepareUpload(
-        config,
-        filename,
-        contentType,
-        subdir,
-        overwrite ?? false,
-      );
-      return {
-        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
-      };
-    },
+    async ({ profile, filename, contentType, subdir, overwrite }) =>
+      runMcpTool(async () => {
+        const { config } = await requireResolved(profile);
+        const result = await prepareUpload(
+          config,
+          filename,
+          contentType,
+          subdir,
+          overwrite ?? false,
+        );
+        return mcpJson(result);
+      }),
   );
 
   server.registerTool(
@@ -252,13 +235,16 @@ export async function startMcpServer(): Promise<void> {
         expectedSizeBytes: z.number().optional(),
       }),
     },
-    async ({ profile, objectKey, expectedSizeBytes }) => {
-      const { config } = await requireResolved(profile);
-      const result = await confirmUpload(config, objectKey, expectedSizeBytes);
-      return {
-        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
-      };
-    },
+    async ({ profile, objectKey, expectedSizeBytes }) =>
+      runMcpTool(async () => {
+        const { config } = await requireResolved(profile);
+        const result = await confirmUpload(
+          config,
+          objectKey,
+          expectedSizeBytes,
+        );
+        return mcpJson(result);
+      }),
   );
 
   const transport = new StdioServerTransport();
@@ -274,6 +260,7 @@ export async function getSetupStatusJson(
     indexPath: INDEX_CONFIG_PATH,
     clientsConfigured: configured ? await listConfiguredClients() : [],
     setupCommand: "npx ossup setup",
+    doctorCommand: "ossup doctor",
   };
   if (!configured) return base;
   const { config, resolved } = await loadConfigWithProfile({ profile });
@@ -285,6 +272,7 @@ export async function getSetupStatusJson(
     prefix: formatPrefixDisplay(config.prefix),
     bucket: config.bucket,
     region: config.region,
+    publicBaseUrl: config.publicBaseUrl ?? null,
   };
 }
 
