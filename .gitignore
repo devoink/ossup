@@ -7,3 +7,6 @@ dist/
 config.json
 .DS_Store
 *.tgz
+.shared/
+.cursor/commands/
+assets/logo.sketch
