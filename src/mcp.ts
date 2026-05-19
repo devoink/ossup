@@ -38,7 +38,7 @@ const profileField = z
   .optional()
   .describe("Named profile; default from .ossput.json or global default");
 
-const INSTRUCTIONS = `You are connected to ossput — Aliyun OSS direct upload (presigned PUT via fetch).
+const INSTRUCTIONS = `You are connected to ossput — manage Aliyun OSS files during development (upload, list, delete via MCP).
 
 When the user wants to upload files to OSS / 阿里云:
 1. If not configured, ask them to run in terminal: ${NPX_SETUP} (do NOT ask for secrets in chat).

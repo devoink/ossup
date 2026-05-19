@@ -1,13 +1,13 @@
 ---
 name: ossput
 description: >-
-  Uploads local files to Aliyun OSS via the ossput MCP server (presigned PUT),
-  lists objects and directory prefixes, and resolves multi-account profiles.
-  Use when the user mentions OSS, Aliyun upload, 阿里云, 图床, object storage,
-  ossput, or wants to put images/files on their bucket and get a public URL.
+  Manages Aliyun OSS files during development via ossput MCP: upload, list,
+  directory prefixes, multi-account profiles. Use when the user works in Cursor/Claude
+  and mentions OSS, 阿里云, uploading images/files for docs or dev, 图床, object storage,
+  or ossput — especially to put local files on a bucket and get a public URL.
 ---
 
-# ossput — 阿里云 OSS 直传
+# ossput — 开发中用 AI 管理阿里云 OSS
 
 ## 前置条件
 

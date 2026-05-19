@@ -1,7 +1,7 @@
 {
   "name": "ossput",
   "version": "0.0.1",
-  "description": "MCP server for Aliyun OSS presigned direct upload (Node fetch) — setup via CLI, upload via Agent or `ossput put`",
+  "description": "MCP + CLI for AI-assisted Aliyun OSS file management during development (Cursor / Claude)",
   "type": "module",
   "main": "./dist/index.js",
   "repository": {
@@ -11,7 +11,7 @@
   "bugs": {
     "url": "https://github.com/devoink/ossput/issues"
   },
-  "homepage": "https://github.com/devoink/ossput#readme",
+  "homepage": "https://devoink.github.io/ossput/",
   "bin": {
     "ossput": "dist/index.js"
   },
@@ -30,7 +30,8 @@
     "test": "npm run build && node scripts/run-tests.mjs",
     "prepublishOnly": "npm run build && npm test",
     "start": "node dist/index.js",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "docs:dev": "npx --yes serve docs -p 5173"
   },
   "keywords": [
     "mcp",

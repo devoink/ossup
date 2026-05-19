@@ -16,7 +16,7 @@ import { runDoctor } from "./doctor.js";
 import { ui } from "./setup/ui.js";
 
 function printUsage(): void {
-  console.log(`ossput — 阿里云 OSS 直传（MCP + 命令行）
+  console.log(`ossput — 开发工作流中的阿里云 OSS 文件管理（MCP + 命令行）
 
 用法:
   ossput                      启动 MCP 服务

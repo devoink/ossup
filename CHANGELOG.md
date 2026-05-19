@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+### Added
+
+- 官网：<https://devoink.github.io/ossput/>（`docs/` + GitHub Pages）
+  - shadcn 深色主题、Hero macOS 终端（ASCII Logo、循环打字动效）
+  - 能力 / MCP 工具表 / 多包管理器安装 Tab / RAM 策略板块
+  - 支持 Agent 标签（Cursor、Claude Code、Claude Desktop）
+- `npm run docs:dev`：本地预览官网
+- `docs/assets/logo.png`：官网与 favicon 品牌图
+
+### Changed
+
+- README：OSSPUT 定位、多方式安装表、官网与本地预览说明
+- 产品文案统一为「开发时由 Agent 管理 OSS 文件」
+
 ## 0.0.1
 
 ### Added

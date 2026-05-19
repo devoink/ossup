@@ -30,8 +30,8 @@ export function printAsciiLogo(version?: string): void {
 
   const tag =
     version != null
-      ? `── ossput v${version} · Aliyun OSS direct upload MCP ──`
-      : "── ossput · Aliyun OSS MCP ──";
+      ? `── ossput v${version} · AI-assisted OSS file management ──`
+      : "── ossput · OSS for development workflows ──";
   console.log("");
   console.log(pad(dim(tag), 2));
   console.log("");

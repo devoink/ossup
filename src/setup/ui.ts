@@ -40,7 +40,7 @@ export function printWelcome(version: string): void {
   printAsciiLogo(version);
   rule("═");
   line(ui.bold("安装向导"));
-  line(ui.dim("阿里云 OSS 直传 · 一键配置 MCP"));
+  line(ui.dim("开发中用 AI 管理 OSS · 一键配置 MCP"));
   rule("═");
   console.log("");
   line(ui.dim("将依次完成："));

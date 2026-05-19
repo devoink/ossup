@@ -22,7 +22,7 @@ gh repo create "${OWNER}/${REPO}" \
   --"${VISIBILITY}" \
   --source=. \
   --remote=origin \
-  --description="MCP + Skill for Aliyun OSS presigned direct upload" \
+  --description="MCP + CLI for AI-assisted Aliyun OSS file management in development" \
   --push
 
 echo "Done: https://github.com/${OWNER}/${REPO}"

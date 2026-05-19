@@ -1,6 +1,6 @@
 # Agent 说明（ossput）
 
-本仓库提供 **ossput**：阿里云 OSS Presigned 直传的 MCP 服务 + CLI。
+本仓库提供 **ossput**：开发过程中通过 AI（MCP + Skill）管理阿里云 OSS 文件的 CLI 与 MCP 服务。
 
 ## 上传到 OSS 时
 
